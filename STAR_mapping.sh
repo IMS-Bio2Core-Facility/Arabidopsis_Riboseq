@@ -12,7 +12,7 @@
 #! Name of the job:
 #SBATCH -J Map59
 #! Which project should be charged:
-#SBATCH -A CHIARUGI-CCLD-SL2-CPU
+#SBATCH -A CHIARUGI-SL3-CPU
 #! How many whole nodes should be allocated?
 #SBATCH --nodes=2
 #! How many (MPI) tasks will there be in total? (<= nodes*16)
@@ -27,8 +27,7 @@
 ##SBATCH --no-requeue
 
 #! Do not change:
-#SBATCH -p clincloud-himem
-
+#SBATCH -p skylake-himem
 #! sbatch directives end here (put any additional directives above this line)
 
 #! Notes:
@@ -67,15 +66,14 @@ options=""
 #! Work directory (i.e. where the job will run):
 :
 
-cd /rds/project/dc702/rds-dc702-bio2_core_rds/Personal_folders_ext/hpcmalo1/trimm_riboseq_2
+cd /rds/project/dc702/rds-dc702-bio2_core_rds/Personal_folders_ext/hpcmalo1/rimasti
 
-for i in *.fastq
+for i in *.fastq.gz
 
 do
 
-STAR --runThreadN 30 --genomeDir /rds/project/dc702/rds-dc702-bio2_core_rds/Personal_folders_ext/hpcmalo1/star_index --readFilesIn $i ${i%.fastq}.fastq --runMode alignReads --outFileNamePrefix /rds/project/dc702/rds-dc702-bio2_core_rds/Personal_folders_ext/hpcmalo1/Mapped_riboseq/${i%.fastq}. --outMultimapperOrder Random --outSAMmultNmax 1 --quantMode TranscriptomeSAM GeneCounts --outSAMtype BAM SortedByCoordinate 
-
+STAR --runThreadN 30 --alignSJDBoverhangMin 1 --alignSJoverhangMin 51 --outFilterMismatchNmax 2 --alignEndsType EndToEnd  --genomeDir /rds/project/dc702/rds-dc702-bio2_core_rds/Personal_folders_ext/hpcmalo1/star_index --readFilesIn ${i%.fastq.gz}.fastq.gz --readFilesCommand gunzip -c --runMode alignReads --outFileNamePrefix /rds/project/dc702/rds-dc702-bio2_core_rds/Personal_folders_ext/hpcmalo1/Mapped_riboseq/${i%.fastq.gz}. --outMultimapperOrder Random --outSAMmultNmax 1 --quantTranscriptomeBan IndelSoftclipSingleend  --quantMode GeneCounts --outSAMtype BAM SortedByCoordinate --limitBAMsortRAM 31532137230 --outSAMattributes All
 
 done
 
-
+ 
